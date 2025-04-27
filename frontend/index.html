@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        select, video { display: block; margin: 20px 0; }
+        video { max-width: 600px; width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>Video Player</h1>
+    <select id="videoSelect" onchange="playVideo()">
+        <option value="">Select a video</option>
+    </select>
+    <video id="videoPlayer" controls>
+        <source id="videoSource" src="" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <script>
+        async function loadVideos() {
+            try {
+                const response = await fetch('http://localhost:3000/videos');
+                const videos = await response.json();
+                const select = document.getElementById('videoSelect');
+                videos.forEach(video => {
+                    const option = document.createElement('option');
+                    option.value = video.url;
+                    option.textContent = video.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading videos:', error);
+            }
+        }
+
+        function playVideo() {
+            const select = document.getElementById('videoSelect');
+            const videoSource = document.getElementById('videoSource');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoUrl = select.value;
+
+            if (videoUrl) {
+                videoSource.setAttribute('src', videoUrl);
+                videoPlayer.load();
+                videoPlayer.play();
+            }
+        }
+
+        window.onload = loadVideos;
+    </script>
+</body>
+</html>
